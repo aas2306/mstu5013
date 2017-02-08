@@ -8,7 +8,7 @@
 		<!-- ref or reference attribute is a quick way to "bookmark" an element so we can quickly access it in javascript later. -->
 		<!-- E.g. HTML <img ref="xxx"/>  -->
 		<!-- E.g. JS   this.refs.xxx points to the img tag prior -->
-		<input type="text" ref="titleEl" placeholder="Enter title">
+		<input type="text" ref="fff" placeholder="Enter title">
 		<input type="text" ref="authorEl" placeholder="Enter author">
 		<button type="button" onclick={ addBook }>Create</button>
 	</div>
@@ -31,6 +31,12 @@
 
 
 	<script>
+		this.on('updated', function(){
+			this.refs.fff.value = "BLAH";
+		});
+
+		console.log();
+
 		this.myBooks = [{
 			title: "The Unbearable Lightness of Being",
 			author: "Milan Kundera"
@@ -52,6 +58,9 @@
 			var index = this.myBooks.indexOf(bookObj);
 			this.myBooks.splice(index, 1);
 		};
+// When you have something like .splice(3, 1) it means to "remove 1 element from index 3" in the array being referred to.
+// When you change the 1 to another number, say 2, it will remove the index you indicated and the next one (i.e., removes indices 3 and 4 in this example).
+// I also tried it with just .splice(index) and no number following it and it removed the whole array (aka all the books in the list)
 
 		this.addBook = function(event) {
 			var title = this.refs.titleEl.value;
