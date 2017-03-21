@@ -25,16 +25,30 @@
 		var that = this;
 
 		// STATIC data that eventually will come from Firebase
-		this.fakeData = [{
-			task: "Item A",
-			done: true
-		},{
-			task: "Item B",
-			done: false
-		},{
-			task: "Item C",
-			done: false
-		}];
+		// this.fakeData = [{
+		// 	task: "Item A",
+		// 	done: true
+		// },{
+		// 	task: "Item B",
+		// 	done: false
+		// },{
+		// 	task: "Item C",
+		// 	done: false
+		// }];
+
+		this.fakeData = [];
+
+		firebase.database().ref('todos').on('value', function(snapshot) {
+			var list = [];
+			snapshot.forEach(function(thing) {
+				list.push(thing.val());
+			});
+			that.fakeData = list;
+			that.update();
+			console.log(snapshot.val());
+		})
+
+
 
 		// To understand the event object better see:
 		// http://riotjs.com/guide/#event-handlers
@@ -49,6 +63,12 @@
 
 				event.target.value = "";	// RESET INPUT
 				event.target.focus();			// FOCUS BACK ON INPUT
+
+				var database = firebase.database();
+				var key = database.ref('todos').push().key;
+				// "push" pushes a SPACE into the database, but does not actually WRITE anything
+				database.ref('todos/' + key).set(newTask);
+				// "set" is what actually writes the object into the new key space
 			}
 		}
 
