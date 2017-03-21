@@ -55,20 +55,24 @@
 			each property of the snapshot is the todo data
 		*/
 
-		todoItemsRef.on('value', function(snapshot) {
-			console.log('"value" snapshot.val()', snapshot.val());
-			var data = snapshot.val(); // Object with properties as keys
 
-			var todos = [];
-
-			for (var key in data) {
-				todos.push(data[key]);
-			}
-
-			that.todosData = todos;
-			console.log('this.todosData', that.todosData);
-			that.update();
-		});
+// any change in VALUE to the todoItems node will run this function!!!
+// this allows the program to READ data from the database
+		// todoItemsRef.on('value', function(snapshot) {
+		// 	console.log('"value" snapshot.val()', snapshot.val());
+		// 	var data = snapshot.val(); // Object with properties as keys
+		//
+		// 	var todos = [];
+		//
+		// 	for (var key in data) {
+		// 		todos.push(data[key]);
+		// 	} // this LOOPS through every property in data object and gets the value, and pushes it to the todos array
+		//
+		// 	that.todosData = todos;
+		// 	console.log('this.todosData', that.todosData);
+		// 	console.log( todos);
+		// 	that.update();
+		// });
 
 
 		/*
@@ -77,37 +81,42 @@
 			snapshot from 'value' above?
 		*/
 
-		// todoItemsRef.on('child_added', function(snapshot) {
-		// 	console.log('"child_added" snapshot.val()', snapshot.val());
-		//
-		// 	var data = snapshot.val(); // Object with properties as keys
-		// 	that.todosData.push(data);
-		//
-		// 	console.log('this.todosData', that.todosData);
-		// 	that.update();
-		// });
+		todoItemsRef.on('child_added', function(snapshot) {
+			console.log('"child_added" snapshot.val()', snapshot.val());
+			console.log("snapshot", snapshot);
 
-		// todoItemsRef.on('child_removed', function(snapshot) {
-		// 	console.log('"child_removed" snapshot.val()', snapshot.val());
+			var data = snapshot.val(); // Object with properties as keys
+			that.todosData.push(data);
+
+			console.log('this.todosData', that.todosData);
+			that.update();
+		});
+
+//
+
+		todoItemsRef.on('child_removed', function(snapshot) {
+			console.log('"child_removed" snapshot.val()', snapshot.val());
+
+			var data = snapshot.val();
+			var key = snapshot.key;
+
+			var targetTodo;
+
+			for (var i = 0; i < that.todosData.length; i++) {
+				if (that.todosData[i].id === key) {
+					targetTodo = that.todosData[i];
+					break;
+				}
+			}
+
+			var index = that.todosData.indexOf(targetTodo);
+			that.todosData.splice(index, 1);
+
+			console.log(that.todosData);
+			that.update();
+		});
+
 		//
-		// 	var data = snapshot.val();
-		// 	var key = snapshot.key;
-		//
-		// 	var targetTodo;
-		//
-		// 	for (var i = 0; i < that.todosData.length; i++) {
-		// 		if (that.todosData[i].id === key) {
-		// 			targetTodo = that.todosData[i];
-		// 			break;
-		// 		}
-		// 	}
-		//
-		// 	var index = that.todosData.indexOf(targetTodo);
-		// 	that.todosData.splice(index, 1);
-		//
-		// 	console.log(that.todosData);
-		// 	that.update();
-		// });
 
 
 		addItem(event){
