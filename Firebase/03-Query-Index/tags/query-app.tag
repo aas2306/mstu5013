@@ -58,12 +58,15 @@
 		var traitsRef = database.ref('traits');
 
 		// STARTER nonsense data
-		this.data = {a:1,b:2,c:3};
+		this.data = {
+			a: 1,
+			b: 2,
+			c: 3
+		};
 		this.json = toJSON(this.data);
 		this.traits = toJSON(this.traits);
 
 		console.log('query-app.tag');
-
 
 		/*
 			https://firebase.google.com/docs/reference/js/firebase.database.Query
@@ -83,32 +86,31 @@
 			Part I --------------------------------------------------
 		*/
 		getAllStudents(event) {
-			studentsRef.once('value', function(snapshot) {
+			studentsRef.once('value', function (snapshot) {
 				that.data = snapshot.val();
 				that.update();
 			});
 		}
 		versionA(event) {
-			studentsRef.orderByChild('gender').once('value', function(snapshot){
+			studentsRef.orderByChild('gender').once('value', function (snapshot) {
 				that.data = snapshot.val();
 				that.update();
+				console.log(snapshot.val());
 			});
 		}
 		versionB(event) {
 			// Try changing the limit to 5, what happens?
-			studentsRef.orderByChild('gender').limitToFirst(4).once('value', function(snapshot){
+			studentsRef.orderByChild('gender').limitToFirst(4).once('value', function (snapshot) {
 				that.data = snapshot.val();
 				that.update();
 			});
 		}
 		versionC(event) {
-			studentsRef.orderByChild('gender').equalTo('n/a').once('value', function(snapshot){
+			studentsRef.orderByChild('gender').equalTo('n/a').once('value', function (snapshot) {
 				that.data = snapshot.val();
 				that.update();
 			});
-		}
-
-
+		} // EQUAL TO ACTUALLY FILTERS BY A SPECIFIC CHILD
 
 		/*
 			Part II --------------------------------------------------
@@ -117,18 +119,27 @@
 			event.preventUpdate = true;
 
 			if (this.gender === "all") {
-				studentsRef.once('value', function(snapshot){
+				studentsRef.once('value', function (snapshot) {
+					that.data = snapshot.val();
+					that.update();
+				});
+			} else if (this.gender === "male") {
+				studentsRef.orderByChild('gender').equalTo('male').once('value', function (snapshot) {
 					that.data = snapshot.val();
 					that.update();
 				});
 			} else {
-				// Can you hook this up so that we can get just the gender selected?
-				// Can you create the interface AND hook it up so that users can enter a limit to how many get queried? E.g. 2, no more than 5.
+				studentsRef.orderByChild('gender').equalTo('female').once('value', function (snapshot) {
+					that.data = snapshot.val();
+					that.update();
+					// Can you hook this up so that we can get just the gender selected? Can you create the interface AND hook it up so that users can enter a limit to how many get queried? E.g. 2, no more than 5.
+				});
 			}
 		}
 		setGenderFilter(event) {
 			this.gender = event.target.value;
 		}
+
 
 		/*
 			Part III --------------------------------------------------
@@ -141,18 +152,16 @@
 				var queryString = that.refs.traitInput.value;
 
 				// HINT: Below, you see something like '\uf8ff'. This is a character code that represents a character with a very very very high value. E.g. B comes after A. X comes after B. '\uf8ff' comes WAAAAY after any reasonable character in terms of order.
-				// Think of it like if I enter 'a' + '\uf8ff', it's almost like entering 'az'.
-				// So what does it mean when I say, search traits between: 'ha' and 'haz'? What traits would come up?
+				// Think of it like if I enter 'a' + '\uf8ff', it's almost like entering 'az'. So what does it mean when I say, search traits between: 'ha' and 'haz'? What traits would come up?
 
-				traitsRef.orderByKey().startAt(queryString).endAt(queryString + '\uf8ff').once('value', function(snapshot){
-				  that.traits = snapshot.val();
+				traitsRef.orderByKey().startAt(queryString).endAt(queryString + '\uf8ff').once('value', function (snapshot) {
+					that.traits = snapshot.val();
 					that.update();
 				});
 
 				event.preventDefault();
 			}
 		}
-
 
 		/*
 			HELPERS --------------------------------------------------
@@ -163,17 +172,16 @@
 			return JSON.stringify(jsData, null, 2);
 		}
 		// Converts data to JSON every update
-		this.on('update', function(){
+		this.on('update', function () {
 			that.json = toJSON(that.data);
 			that.traits = toJSON(that.traits);
 		});
-
-
 	</script>
 
 	<style>
 		:scope {
 			display: block;
 		}
+
 	</style>
 </query-app>
