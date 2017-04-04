@@ -12,26 +12,36 @@
 		var that = this;
 		this.user = user; // Comes from the global user.
 
+		/* --------------------------------------------------
+			AUTHENTICATION -> firebase.auth()
+			1) onAuthStateChanged()
+			2) signInWithPopup()
+			3) signOut()
+
+			ATOMIC WRITES
+			1) ref.update(updateObject)
+			2) See data architecture implications
+
+			AUTHORIZATION
+			1) Rules and cascades
+			2) Keywords
+				- auth
+				- $something
+				- data
+				- newData
+		-------------------------------------------------- */
+
+
 		// AUTHENTICATION LISTENER
 		// Once we code this, we have a "live" listener that is constantly listening for whether the user is logged in or not. It will fire the callback if it "hears" a login, or logout.
 		firebase.auth().onAuthStateChanged(function(userObj) {
 			if (userObj) {
 				// User is signed in.
-				// The user object passed back by the callback function has a variety of properties like so.
-				var displayName = userObj.displayName;
-				var email = userObj.email;
-				var emailVerified = userObj.emailVerified;
-				var photoURL = userObj.photoURL;
-				var isAnonymous = userObj.isAnonymous;
-				var uid = userObj.uid;
-				var providerData = userObj.providerData;
-
 				that.user = userObj;
 				user = that.user; // set global user
 			} else {
 				// User is not signed in.
 				that.user = null;
-				user = null; // release global user
 			}
 			that.update();
 		});
