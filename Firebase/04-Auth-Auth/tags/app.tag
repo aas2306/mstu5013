@@ -10,7 +10,7 @@
 
 	<script>
 		var that = this;
-		this.user = user; // Comes from the global user.
+		// this.user = user; // Comes from the global user.
 
 		/* --------------------------------------------------
 			AUTHENTICATION -> firebase.auth()
@@ -39,9 +39,11 @@
 				// User is signed in.
 				that.user = userObj;
 				user = that.user; // set global user
+				console.log(user);
 			} else {
 				// User is not signed in.
 				that.user = null;
+				console.log(user);
 			}
 			that.update();
 		});
@@ -55,6 +57,7 @@
 
 				// Setting it to global user for convenience.
 				user = result.user;
+				console.log("result: ", result);
 
 			}).catch(function (error) {
 				// Handle Errors here.

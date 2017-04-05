@@ -41,7 +41,7 @@
 				updates['public/' + comment.id] = null;
 				updates['users/' + user.uid + '/' + comment.id] = comment;
 			}
-
+			console.log(updates);
 			// One call to write to multiple locations
 			database.ref('comments').update(updates);
 		}
